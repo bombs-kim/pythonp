@@ -4,15 +4,10 @@
 from __future__ import print_function
 import sys
 from itertools import chain, islice
-from _collections_abc import Sequence
-
-
-# TODO: Check if this is python2 compatible
-
-
-# TODO: Uncomment this later if it's really needed
-# if __name__ != '__main__':
-#     raise Exception('pythonc should not be imported to other modules')
+try:
+    from _collections_abc import Iterable, Sequence
+except:
+    from collections import Iterable, Sequence
 
 
 # [Handy global vairables defined]
@@ -47,7 +42,7 @@ from _collections_abc import Sequence
 # You can also do some crazy stuffs becuase pythonc can do anything
 # that python can do
 # `ls | pythonc 'from random import sample; p(sample(_lines, 2))'`
-# `ls | pythonc 'sum(len(l) for l in lines)'`
+# `ls | pythonc 'p(sum(len(l) for l in lines))'`
 
 
 def p(value, *args, **kwargs):
@@ -69,13 +64,17 @@ def p(value, *args, **kwargs):
         print(v, *args, **kwargs)
 
 
-# [Some terms]
-# iterable: What can get an iterator from. A container.
-# iterator: What you can call next() on.
-# Note that the two concepts are not mutually exclusive in python, which can be
-# confusing from time to time. For example, every iterator is an iterable.
+# [Abstract base classes(ABC's) used]
+# Iterable: What you can get an iterator from. A container.
+# Iterator: What you can call next() on.
+# Sequence: What supports all the operations on a read-only sequence, such
+#           as __contains__, __reversed__, index and count methods
+# Note that Iterable and Iterator are not mutually exclusive in python,
+# which can be confusing from time to time. For example, every iterator
+# is an iterable.
 
-class SubscriptableIterator(object):
+class SubscriptableIterable(Iterable):
+    """A SubscriptableIterable constructs a Iterable from an Iterator."""
     def __init__(self, iterator):
         self.iterator = iterator
         self.used = False
@@ -87,7 +86,7 @@ class SubscriptableIterator(object):
     
     def __iter__(self):
         self.check_used()
-        return iter(self.iterator)
+        return self.iterator
 
     def __getitem__(self, key):
         self.check_used()
@@ -98,18 +97,18 @@ class SubscriptableIterator(object):
         raise KeyError("Error")
 
 
-class LazyIterable(Sequence):
-    """a LazyIterable lazily restores the iterable(container)
-       from a iterator"""
-    def __init__(self, iterator):
-        self.iterator = iterator
+class LazySequence(Sequence):
+    """A LazySequence lazily constructs a Sequence from an iterable."""
+
+    def __init__(self, iterable):
+        self.iterable = iterable
         self.restored = False
     
     def get_container(self):
         if self.restored:
             return
         self.restored = True
-        self.restored_iterable = list(self.iterator)
+        self.restored_iterable = list(self.iterable)
     
     def __len__(self):
         self.get_container()
@@ -120,10 +119,12 @@ class LazyIterable(Sequence):
         return self.restored_iterable[key]
 
 
+line = sys.stdin.readline()  # first line
+lines = SubscriptableIterable(chain([line], sys.stdin.readlines()))
+_lines = LazySequence(lines)
+
+
 def main():
-    line = sys.stdin.readline()
-    lines = SubscriptableIterator(chain([line], sys.stdin.readlines()))
-    _lines = LazyIterable(lines)
     exec(sys.argv[1], globals())
 
 
