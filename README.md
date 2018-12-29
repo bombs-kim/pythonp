@@ -2,7 +2,9 @@
 
 `pythonc` is a short utility script that helps you using python on the 
 command line. Basically, it does what `python -c` does, but not just that.
-See examples below to see how convenient it can be.
+See examples below to see how convenient it can be.  
+Currently, it focuses on helping string manipulation. If you need other
+features, you are welcome to make an issue for it.
 
 
 ## How to install
@@ -25,9 +27,8 @@ mv pythonc/__main__.py ...../pythonc
 
 * `p`: A handy print function with commandline usage in mind. It has the
 same interface as the default print function except that it specially
-handles a single sequence. If it recieves a single sequence as input, the
-default end characer becomes '' not '\n' and it prints as many times as 
-the number of  elements in the sequence
+handles a single sequence. If it recieves a single sequence as input,
+it prints as many times as the number of elements in the sequence.
 
 * `line`: The first input line. `sys.stdin.readline()`.
 
@@ -86,3 +87,5 @@ https://docs.python.org/3/library/string.html
 * It is a good idea to use generator expressions or list comprehensions
 with pythonc  
 https://docs.python.org/3/howto/functional.html
+
+* TODO: Adding some useful non-string-manipulating functionalities

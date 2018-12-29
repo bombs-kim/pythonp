@@ -58,7 +58,9 @@ def p(value, *args, **kwargs):
     if args:
         raise Exception("Giving extra arguments with a sequence of strs is not allowed")
 
-    kwargs['end'] = kwargs.get('end', '')
+    # TODO: Decide default end character for a sequence input
+    #       Which one would be better, '' or '\n'?
+    # kwargs['end'] = kwargs.get('end', '')
     for v in values:
         print(v, *args, **kwargs)
 
