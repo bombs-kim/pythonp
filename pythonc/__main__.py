@@ -12,7 +12,11 @@ except:
 
 # [Handy global vairables defined]
 #
-# p    : A handy print function with command line usage in mind
+# p    : A handy print function with commandline usage in mind. It's has the
+#        same interface as the default print function except that it specially
+#        handles a single sequence. If it recieves a single sequence as input,
+#        the default end characer becomes '' not '\n' and it prints as many
+#        times as the number of elements in the sequence
 # line : First input line
 # lines: All input lines including the first one. Note that this should be
 #        considered as a stream. Therefore, you cannot reuse it even though
@@ -46,21 +50,18 @@ except:
 
 
 def p(value, *args, **kwargs):
-    """A replacement for the builtin print function that can take a str
-    or any sequence type as an input. In the latter case, it prints
-    as many time as the number of elements in the sequence"""
-
-    if type(value) is str:
-        value = [value.strip()]
-
     try:
-        value = (v.strip() for v in value)
+        values = iter(value)
     except TypeError:
-        # If value is neither str or sequence type just print it.
+        # If value is not iterable, just print it
         print(value, *args, **kwargs)
         return
 
-    for v in value:
+    if args:
+        raise Exception("Giving extra arguments with a sequence of strs is not allowed")
+
+    kwargs['end'] = kwargs.get('end', '')
+    for v in values:
         print(v, *args, **kwargs)
 
 
@@ -94,7 +95,7 @@ class SubscriptableIterable(Iterable):
             return next(islice(self.iterator, key, key+1))
         elif isinstance(key, slice):
             return islice(self.iterator, key.start, key.stop, key.step)
-        raise KeyError("Error")
+        raise KeyError('Error')
 
 
 class LazySequence(Sequence):
