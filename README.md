@@ -23,21 +23,22 @@ mv pythonc/__main__.py ...../pythonc
 
 ## Handy global vairables defined
 
-* `p`: A handy print function with commandline usage in mind. It's has the
+* `p`: A handy print function with commandline usage in mind. It has the
 same interface as the default print function except that it specially
 handles a single sequence. If it recieves a single sequence as input, the
 default end characer becomes '' not '\n' and it prints as many times as 
 the number of  elements in the sequence
 
-* `line`: First input line
+* `line`: The first input line. `sys.stdin.readline()`.
 
-* `lines`: All input lines including the first one. Note that this should
-be considered as a stream. Therefore, you cannot reuse it even though
+* `lines`: All input lines including the first one.
+`sys.stdin.readlines()`. Note that this should be considered
+as a stream. Therefore, you cannot reuse it even though
 it's subscriptable and allows a one time random access.
 
-* `_lines` : Lazy evaluted non-stream lines. You can access its element
-as many times as you want. This is not evaluated until you use it to
-save up memory.
+* `_lines` : Lazy evaluted non-stream-like lines. You can access
+its element as many times as you want. The actual input lines
+are not prepared to save up memory if you don't use it.
 
 
 ## Examples
