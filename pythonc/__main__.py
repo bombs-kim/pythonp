@@ -11,43 +11,18 @@ except:
 
 
 # ## Handy global vairables defined
-#
-# * `p`: A handy print function with commandline usage in mind. It has the
-# same interface as the default print function except that it specially
-# handles a single sequence. If it recieves a single sequence as input, the
-# default end characer becomes '' not '\n' and it prints as many times as
-# the number of  elements in the sequence
-#
-# * `line`: The first input line. `sys.stdin.readline()`.
-#
-# * `lines`: All input lines including the first one.
-# `sys.stdin.readlines()`. Note that this should be considered
-# as a stream. Therefore, you cannot reuse it even though
-# it's subscriptable and allows a one time random access.
-#
-# * `_lines`: Lazy evaluted non-stream-like lines. You can access
-# its element as many times as you want. The actual input lines
-# are not prepared to save up memory if you don't use it.
+# TODO
 
 
 # ## Examples
-#
-# Get files whose names are longer than 5
-# $ ls | pythonc 'p(l for l in lines if len(l)>5)'
-#
-# Concatenate filenames
-# $ ls | pythonc 'p((l.strip() for l in lines), end=",")'
-#
-# Get the 4th column of the processs status
-# ps | pythonc 'p((l.split()[3] for l in lines[1:]), end="\n")'
-#
-# You can also do some crazy stuffs becuase pythonc can do anything
-# that python can do
-# ls | pythonc 'from random import sample; p(sample(_lines, 2))'
-# ls | pythonc 'p(sum(len(l) for l in lines))'
+# TODO
 
 
 def p(value, *args, **kwargs):
+    if isinstance(value, str):
+        print(value, *args, **kwargs)
+        return
+
     try:
         values = iter(value)
     except TypeError:
@@ -74,27 +49,17 @@ def p(value, *args, **kwargs):
 # which can be confusing from time to time. For example, every iterator
 # is an iterable.
 
-class SubscriptableIterable(Iterable):
-    """A SubscriptableIterable constructs a Iterable from an Iterator."""
-    def __init__(self, iterator):
-        self.iterator = iterator
-        self.used = False
-    
-    def check_used(self):
-        if self.used:
-            raise Exception('You cannot use SubscriptableChain twice')
-        self.used = True
-    
+
+class SubscriptableStdin(Iterable):
     def __iter__(self):
-        self.check_used()
-        return self.iterator
+        for line in sys.stdin:
+            yield line
 
     def __getitem__(self, key):
-        self.check_used()
         if isinstance(key, int) and key >= 0:
-            return next(islice(self.iterator, key, key+1))
+            return next(islice(self, key, key+1))
         elif isinstance(key, slice):
-            return islice(self.iterator, key.start, key.stop, key.step)
+            return islice(self, key.start, key.stop, key.step)
         raise KeyError('Error')
 
 
@@ -120,8 +85,7 @@ class LazySequence(Sequence):
         return self.restored_iterable[key]
 
 
-line = sys.stdin.readline()  # first line
-lines = SubscriptableIterable(chain([line], sys.stdin.readlines()))
+lines = SubscriptableStdin()
 _lines = LazySequence(lines)
 
 
