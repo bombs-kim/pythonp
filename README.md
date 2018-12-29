@@ -44,9 +44,17 @@ are not prepared to save up memory if you don't use it.
 
 ## Examples
 
+Print numbers
+```bash
+pythonc 'p(range(3))'
+0
+1
+2
+```
+
 Get files whose names are longer than 5  
 ```bash
-$ ls | pythonc 'p(l for l in lines if len(l)>5)'
+$ ls | pythonc "p((l for l in lines if len(l)>5), end='')"
 LICENSE
 README.md
 pythonc
@@ -55,13 +63,13 @@ setup.py
 
 Concatenate filenames  
 ```bash
-$ ls | pythonc 'p((l.strip() for l in lines), end=",")'
+$ ls | pythonc "p((l.strip() for l in lines), end=',')"
 LICENSE,README.md,pythonc,setup.py,
 ```
 
 Get the 4th column of the processs status  
 ```bash
-ps | pythonc 'p((l.split()[3] for l in lines[1:]), end="\n")'
+$ ps | $pythonc 'p(l.split()[3] for l in lines[1:])'
 /usr/local/bin/fish
 -fish
 python3
@@ -72,8 +80,8 @@ ssh
 You can also do some crazy stuffs becuase pythonc can do anything
 that python can do  
 ```bash
-ls | pythonc 'from random import sample; p(sample(_lines, 2))'
-ls | pythonc 'p(sum(len(l) for l in lines))'
+$ ls | pythonc 'from random import sample; p(sample(_lines, 2))'
+$ ls | pythonc 'p(sum(len(l) for l in lines))'
 ```
 
 
