@@ -1,0 +1,126 @@
+#! /usr/bin/env python
+from __future__ import print_function
+import sys
+from itertools import chain, islice
+from _collections_abc import Sequence
+
+
+# TODO: Check if this is python2 compatible
+
+
+# TODO: Uncomment this later if it's really needed
+# if __name__ != '__main__':
+#     raise Exception('pythonc should not be imported to other modules')
+
+
+# [Handy global vairables defined]
+#
+# p    : A handy print function with command line usage in mind
+# line : First input line
+# lines: All input lines including the first one. Note that this should be
+#        considered as a stream. Therefore, you cannot reuse it even though
+#        it's subscriptable and allows a one time random access.
+# _lines : Lazy evaluted non-stream lines. You can access its element as many
+#        times as you want. This is not evaluated until you use it to save up
+#        memory.
+
+
+# [Examples]
+# Refer to python officials docs to learn useful string manipulating functions
+# https://docs.python.org/3/library/string.html
+#
+# You are recommended to use generator expressions or list comprehensions
+# with pythonc
+# https://docs.python.org/3/howto/functional.html
+#
+# Concatenate filenames
+# `ls | pythonc 'p(lines, end=",")'`
+#
+# Get files whose names are longer than 5
+# `ls | pythonc 'p(l for l in lines if len(l)>5)'`
+#
+# Get the 4th column of the processs status
+# `ps | pythonc 'p(l.split()[3] for l in lines[1:])'`
+#
+# You can also do some crazy stuffs becuase pythonc can do anything
+# that python can do
+# `ls | pythonc 'from random import sample; p(len(_lines)); p(sample(_lines, 2))'`
+# `ls | pythonc 'sum(len(l) for l in lines)'`
+
+
+def p(value, *args, **kwargs):
+    """A replacement for the builtin print function that can take a str
+    or any sequence type as an input. In the latter case, it prints
+    as many time as the number of elements in the sequence"""
+
+    if type(value) is str:
+        value = [value.strip()]
+
+    try:
+        value = (v.strip() for v in value)
+    except TypeError:
+        # If value is neither str or sequence type just print it.
+        print(value, *args, **kwargs)
+        return
+
+    for v in value:
+        print(v, *args, **kwargs)
+
+
+# [Some terms]
+# iterable: What can get an iterator from. A container.
+# iterator: What you can call next() on.
+# Note that the two concepts are not mutually exclusive in python, which can be
+# confusing from time to time. For example, every iterator is an iterable.
+
+class SubscriptableIterator(object):
+    def __init__(self, iterator):
+        self.iterator = iterator
+        self.used = False
+    
+    def check_used(self):
+        if self.used:
+            raise Exception('You cannot use SubscriptableChain twice')
+        self.used = True
+    
+    def __iter__(self):
+        self.check_used()
+        return iter(self.iterator)
+
+    def __getitem__(self, key):
+        self.check_used()
+        if isinstance(key, int) and key >= 0:
+            return next(islice(self.iterator, key, key+1))
+        elif isinstance(key, slice):
+            return islice(self.iterator, key.start, key.stop, key.step)
+        raise KeyError("Error")
+
+
+class LazyIterable(Sequence):
+    """a LazyIterable lazily restores the iterable(container)
+       from a iterator"""
+    def __init__(self, iterator):
+        self.iterator = iterator
+        self.restored = False
+    
+    def get_container(self):
+        if self.restored:
+            return
+        self.restored = True
+        self.restored_iterable = list(self.iterator)
+    
+    def __len__(self):
+        self.get_container()
+        return len(self.restored_iterable)
+    
+    def __getitem__(self, key):
+        self.get_container()
+        return self.restored_iterable[key]
+
+
+line = sys.stdin.readline()
+lines = SubscriptableIterator(chain([line], sys.stdin.readlines()))
+_lines = LazyIterable(lines)
+
+
+exec(sys.argv[1], globals())
