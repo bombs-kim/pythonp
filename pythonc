@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import sys
 from itertools import chain, islice
@@ -44,7 +46,7 @@ from _collections_abc import Sequence
 #
 # You can also do some crazy stuffs becuase pythonc can do anything
 # that python can do
-# `ls | pythonc 'from random import sample; p(len(_lines)); p(sample(_lines, 2))'`
+# `ls | pythonc 'from random import sample; p(sample(_lines, 2))'`
 # `ls | pythonc 'sum(len(l) for l in lines)'`
 
 
@@ -118,9 +120,12 @@ class LazyIterable(Sequence):
         return self.restored_iterable[key]
 
 
-line = sys.stdin.readline()
-lines = SubscriptableIterator(chain([line], sys.stdin.readlines()))
-_lines = LazyIterable(lines)
+def main():
+    line = sys.stdin.readline()
+    lines = SubscriptableIterator(chain([line], sys.stdin.readlines()))
+    _lines = LazyIterable(lines)
+    exec(sys.argv[1], globals())
 
 
-exec(sys.argv[1], globals())
+if __name__ == '__main__':
+    main()
