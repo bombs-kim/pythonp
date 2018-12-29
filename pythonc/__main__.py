@@ -10,43 +10,41 @@ except:
     from collections import Iterable, Sequence
 
 
-# [Handy global vairables defined]
+# ## Handy global vairables defined
 #
-# p    : A handy print function with commandline usage in mind. It's has the
-#        same interface as the default print function except that it specially
-#        handles a single sequence. If it recieves a single sequence as input,
-#        the default end characer becomes '' not '\n' and it prints as many
-#        times as the number of elements in the sequence
-# line : First input line
-# lines: All input lines including the first one. Note that this should be
-#        considered as a stream. Therefore, you cannot reuse it even though
-#        it's subscriptable and allows a one time random access.
-# _lines : Lazy evaluted non-stream lines. You can access its element as many
-#        times as you want. This is not evaluated until you use it to save up
-#        memory.
+# * `p`: A handy print function with commandline usage in mind. It has the
+# same interface as the default print function except that it specially
+# handles a single sequence. If it recieves a single sequence as input, the
+# default end characer becomes '' not '\n' and it prints as many times as
+# the number of  elements in the sequence
+#
+# * `line`: The first input line. `sys.stdin.readline()`.
+#
+# * `lines`: All input lines including the first one.
+# `sys.stdin.readlines()`. Note that this should be considered
+# as a stream. Therefore, you cannot reuse it even though
+# it's subscriptable and allows a one time random access.
+#
+# * `_lines`: Lazy evaluted non-stream-like lines. You can access
+# its element as many times as you want. The actual input lines
+# are not prepared to save up memory if you don't use it.
 
 
-# [Examples]
-# Refer to python officials docs to learn useful string manipulating functions
-# https://docs.python.org/3/library/string.html
-#
-# You are recommended to use generator expressions or list comprehensions
-# with pythonc
-# https://docs.python.org/3/howto/functional.html
-#
-# Concatenate filenames
-# `ls | pythonc 'p(lines, end=",")'`
+# ## Examples
 #
 # Get files whose names are longer than 5
-# `ls | pythonc 'p(l for l in lines if len(l)>5)'`
+# $ ls | pythonc 'p(l for l in lines if len(l)>5)'
+#
+# Concatenate filenames
+# $ ls | pythonc 'p((l.strip() for l in lines), end=",")'
 #
 # Get the 4th column of the processs status
-# `ps | pythonc 'p(l.split()[3] for l in lines[1:])'`
+# ps | pythonc 'p((l.split()[3] for l in lines[1:]), end="\n")'
 #
 # You can also do some crazy stuffs becuase pythonc can do anything
 # that python can do
-# `ls | pythonc 'from random import sample; p(sample(_lines, 2))'`
-# `ls | pythonc 'p(sum(len(l) for l in lines))'`
+# ls | pythonc 'from random import sample; p(sample(_lines, 2))'
+# ls | pythonc 'p(sum(len(l) for l in lines))'
 
 
 def p(value, *args, **kwargs):
