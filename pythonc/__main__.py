@@ -90,7 +90,12 @@ _lines = LazySequence(lines)
 
 
 def main():
-    exec(sys.argv[1], globals())
+    import argparse
+    parser = argparse.ArgumentParser(
+        prog='pythonc')
+    parser.add_argument('code', nargs=1)
+    args = parser.parse_args()
+    exec(args.code[0], globals())
 
 
 if __name__ == '__main__':
