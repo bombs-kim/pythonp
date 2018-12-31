@@ -80,9 +80,9 @@ ssh
 You can also do some crazy stuffs becuase pythonp can do anything
 that python can do  
 ```bash
-$ ls | pythonp 'from random import sample; p(sample(_lines, 2))'
+$ ls | pythonp 'from random import sample; p(sample(_lines, 2), end=".")'
 $ ls | pythonp 'p(sum(len(l) for l in lines))'
-$ cat urls.txt | pythonp 'from requests import get; p(get(url.strip()) for url in lines)'
+$ cat urls.txt | pythonp 'from requests import get; [get(url.strip()) for url in lines]'
 ```
 
 
@@ -90,7 +90,7 @@ $ cat urls.txt | pythonp 'from requests import get; p(get(url.strip()) for url i
 
 * Both python2 and python3 are supported.
 
-* Refer to python officials docs to learn useful string manipulating functions  
+* Refer to python official docs to learn useful string manipulating functions
 https://docs.python.org/3/library/string.html
 
 * It is a good idea to use generator expressions or list comprehensions
