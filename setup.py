@@ -6,14 +6,14 @@ with open("README.md", "r") as fh:
 
 
 setuptools.setup(
-    name="pythonc",
-    version="1.0.0",
+    name="pythonp",
+    version="0.0.0",
     author="Beomsoo Kim",
     author_email="bluewhale8202@gmail.com",
-    description="It does what `python -c` does and a few more",
+    description="python -c with a handy print function p",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/bombs-kim/pythonc",
+    url="https://github.com/bombs-kim/pythonp",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 2",
@@ -23,7 +23,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'pythonc = pythonc.__main__:main',
+            'pythonp = pythonp.__main__:main',
         ],
     },
 )

@@ -92,7 +92,7 @@ _lines = LazySequence(lines)
 def main():
     import argparse
     parser = argparse.ArgumentParser(
-        prog='pythonc')
+        prog='pythonp')
     parser.add_argument('code', nargs=1)
     args = parser.parse_args()
     exec(args.code[0], globals())

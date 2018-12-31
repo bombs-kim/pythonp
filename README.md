@@ -1,22 +1,21 @@
-# What is pythonc?
+# What is pythonp?
 
-`pythonc` is a short utility script that helps you using python on the 
-command line. Basically, it does what `python -c` does, but not just that.
-See examples below to see how convenient it can be.  
+`pythonp` is a simple utility script that helps you using python on the
+command line. Basically, it's a `python -c` command with a handy print
+function `p`. See examples below to see how convenient it can be.
 
 
 ## How to install
 
 You can install it via pip
 ```bash
-# test version. will change soon
-python -m pip install --index-url https://test.pypi.org/simple/ pythonc-test
+python -m pip install pythonp
 ```
 
 or you can simply download this repository and copy `__main__.py` to
 one of your `$PATH` locations
 ```bash
-cp pythonc/__main__.py ...../pythonc
+cp pythonp/__main__.py ...../pythonp
 ```
 
 
@@ -34,7 +33,7 @@ Standard input lines where each line ends with a newline
 character. You can think of it as `sys.stdin` except that it's
 subscriptable and allows a one-time random access, which means you
 can do something `lines[3], lines[10:]`.
-<br>
+
 
 #### `_lines`
 Lazy evaluted non-stream-like version of `lines`.
@@ -48,7 +47,7 @@ use it to save up memory.
 
 Print numbers
 ```bash
-$ pythonc 'p(range(3))'
+$ pythonp 'p(range(3))'
 0
 1
 2
@@ -56,34 +55,34 @@ $ pythonc 'p(range(3))'
 
 Get files whose names are longer than 5  
 ```bash
-$ ls | pythonc "p((l for l in lines if len(l)>5), end='')"
+$ ls | pythonp "p((l for l in lines if len(l)>5), end='')"
 LICENSE
 README.md
-pythonc
+pythonp
 setup.py
 ```
 
 Concatenate filenames  
 ```bash
-$ ls | pythonc "p((l.strip() for l in lines if not 'bombs' in l), end=',')"
-LICENSE,README.md,pythonc,setup.py,
+$ ls | pythonp "p((l.strip() for l in lines if not 'bombs' in l), end=',')"
+LICENSE,README.md,pythonp,setup.py,
 ```
 
 Get the 4th column of the processs status  
 ```bash
-$ ps | pythonc 'p(l.split()[3] for l in lines[1:])'
+$ ps | pythonp 'p(l.split()[3] for l in lines[1:])'
 /usr/local/bin/fish
 -fish
 python3
 ssh
 ```
 
-You can also do some crazy stuffs becuase pythonc can do anything
+You can also do some crazy stuffs becuase pythonp can do anything
 that python can do  
 ```bash
-$ ls | pythonc 'from random import sample; p(sample(_lines, 2))'
-$ ls | pythonc 'p(sum(len(l) for l in lines))'
-$ cat urls.txt | pythonc 'from requests import get; p(get(url.strip()) for url in lines)'
+$ ls | pythonp 'from random import sample; p(sample(_lines, 2))'
+$ ls | pythonp 'p(sum(len(l) for l in lines))'
+$ cat urls.txt | pythonp 'from requests import get; p(get(url.strip()) for url in lines)'
 ```
 
 
@@ -95,7 +94,7 @@ $ cat urls.txt | pythonc 'from requests import get; p(get(url.strip()) for url i
 https://docs.python.org/3/library/string.html
 
 * It is a good idea to use generator expressions or list comprehensions
-with pythonc  
+with pythonp
 https://docs.python.org/3/howto/functional.html
 
 * If you want some other features, you are always welcome to make an issue,
