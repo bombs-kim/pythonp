@@ -6,9 +6,8 @@ with open("README.md", "r") as fh:
 
 
 setuptools.setup(
-    # TODO: chagne pythonc-test -> pythonc when released
-    name="pythonc-test",
-    version="0.0.4",
+    name="pythonc",
+    version="1.0.0",
     author="Beomsoo Kim",
     author_email="bluewhale8202@gmail.com",
     description="It does what `python -c` does and a few more",
@@ -17,6 +16,7 @@ setuptools.setup(
     url="https://github.com/bombs-kim/pythonc",
     packages=setuptools.find_packages(),
     classifiers=[
+        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
