@@ -165,6 +165,7 @@ def main():
 
     # Automatic importing support
     g = keydefaultdict(find_name)
+    g.update(globals())
 
     if args.each:
         del g['lines'], g['_lines']
