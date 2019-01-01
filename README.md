@@ -58,6 +58,9 @@ something like `;pass` or `;None` in the end of your code.
 entire lines `lines` or `_lines`. The names `lines` and `_lines` will
 disappear and can not be used.
 
+* Automatic importing is supported. `pythonp` automatically tries to
+import a name for you when it encounters an unseen one.
+
 
 ## Examples
 
@@ -67,6 +70,11 @@ $ pythonp 'range(3)'
 0
 1
 2
+```
+
+Print current time
+```bash
+$ pythonp 'time.time()'
 ```
 
 Get files whose names are longer than 5  

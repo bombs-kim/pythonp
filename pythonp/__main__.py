@@ -2,9 +2,13 @@
 
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+
 import ast
-import sys
+from collections import defaultdict
+import importlib
 from itertools import chain, islice
+import sys
+
 try:
     from _collections_abc import Iterable, Sequence
 except:
@@ -20,6 +24,7 @@ except:
 
 
 def p(value, *args, **kwargs):
+    # TODO: Add dostring
     if isinstance(value, str):
         print(value, *args, **kwargs)
         return
@@ -128,6 +133,26 @@ def exec_one(code, globals):
         p(result)  # TODO: Maybe change end argument
 
 
+class keydefaultdict(defaultdict):
+    def __missing__(self, key):
+        if self.default_factory is None:
+            raise KeyError(key)
+        else:
+            ret = self[key] = self.default_factory(key)
+            return ret
+
+
+def find_name(key):
+    try:
+        return getattr(__builtins__, key)
+    except AttributeError:
+        pass
+    try:
+        return importlib.__import__(key)
+    except KeyError:
+        raise KeyError(key)
+
+
 def main():
     import argparse
     parser = argparse.ArgumentParser(
@@ -138,7 +163,8 @@ def main():
     parser.add_argument('code', nargs=1)
     args = parser.parse_args()
 
-    g = globals().copy()
+    # Automatic importing support
+    g = keydefaultdict(find_name)
 
     if args.each:
         del g['lines'], g['_lines']
