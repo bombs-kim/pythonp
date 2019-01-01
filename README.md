@@ -72,9 +72,10 @@ $ pythonp 'range(3)'
 2
 ```
 
-Print current time
+Print time
 ```bash
 $ pythonp 'time.time()'
+1546362172.5707405
 ```
 
 Get files whose names are longer than 5  
@@ -104,6 +105,7 @@ ssh
 You can also do some crazy stuffs becuase pythonp can do anything
 that python can do  
 ```bash
+$ pythonp "now=datetime.datetime.now();p(now.year+now.day)"
 $ ls | pythonp 'from random import sample; p(sample(_lines, 2), end=".")'
 $ ls | pythonp 'p(sum(len(l) for l in lines))'
 $ cat urls.txt | pythonp -e 'from requests import get; get(l.strip()); pass'
