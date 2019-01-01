@@ -105,12 +105,26 @@ def exec_and_eval_last(code, globals):
     exec(code, globals)
 
 
+def _make_write_hook(old_writer, flag: list):
+    self = old_writer.__self__
+
+    def new_writer(value):
+        self.write = old_writer
+        flag[0] = True
+        old_writer(value)
+    return new_writer
+
+
 def exec_one(code, globals):
-    pos = sys.stdout.tell()
+    write_called = [False]
+    sys.stdout.write = _make_write_hook(
+        sys.stdout.write, write_called)
+    sys.stdout.buffer.write = _make_write_hook(
+        sys.stdout.buffer.write, write_called)
     result = exec_and_eval_last(code, globals)
 
     # If nothing was written to stdout print the last expression
-    if pos == sys.stdout.tell() and result is not None:
+    if not write_called[0] and result is not None:
         p(result)  # TODO: Maybe change end argument
 
 
