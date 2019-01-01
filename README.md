@@ -42,12 +42,26 @@ lines multiple times, reverse it, do inclusion test on it,
 and so forth. The lines are not prepared until you actually
 use it to save up memory.
 
+#### `l`
+Each line of `lines` When -e option is on. See the explanation
+on `-e --each` option below.
+
+
+## Features
+* The last expression is automatically printed with `p` function if 
+nothing has been previously printed. If you don't want that you can
+put `;pass` in the end.
+
+* If `-e` option is given, your code can work on each line `l`, not the
+entire lines `lines` or `_lines`. The names `lines` and `_lines`
+disappear and can not be used.
+
 
 ## Examples
 
 Print numbers
 ```bash
-$ pythonp 'p(range(3))'
+$ pythonp 'range(3)'
 0
 1
 2
@@ -70,7 +84,7 @@ LICENSE,README.md,pythonp,setup.py,
 
 Get the 4th column of the processs status  
 ```bash
-$ ps | pythonp 'p(l.split()[3] for l in lines[1:])'
+$ ps | pythonp '(l.split()[3] for l in lines[1:])'
 /usr/local/bin/fish
 -fish
 python3
@@ -82,7 +96,7 @@ that python can do
 ```bash
 $ ls | pythonp 'from random import sample; p(sample(_lines, 2), end=".")'
 $ ls | pythonp 'p(sum(len(l) for l in lines))'
-$ cat urls.txt | pythonp 'from requests import get; [get(url.strip()) for url in lines]'
+$ cat urls.txt | pythonp 'from requests import get; [get(url.strip()) for url in lines]; pass'
 ```
 
 

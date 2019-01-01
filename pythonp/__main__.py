@@ -2,6 +2,7 @@
 
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+import ast
 import sys
 from itertools import chain, islice
 try:
@@ -85,17 +86,53 @@ class LazySequence(Sequence):
         return self.restored_iterable[key]
 
 
+# TODO: Maybe lines -> ls for brevity
 lines = SubscriptableStdin()
 _lines = LazySequence(lines)
+
+
+def exec_and_eval_last(code, globals):
+    stmts = list(ast.iter_child_nodes(ast.parse(code)))
+    if not len(stmts):
+        raise Exception("No statements given")
+
+    if isinstance(stmts[-1], ast.Expr):
+        if len(stmts) > 1:
+            exec(compile(ast.Module(
+                body=stmts[:-1]), filename="<ast>", mode="exec"), globals)
+        return eval(compile(ast.Expression(body=stmts[-1].value), filename="<ast>", mode="eval"), globals)
+
+    exec(code, globals)
+
+
+def exec_one(code, globals):
+    pos = sys.stdout.tell()
+    result = exec_and_eval_last(code, globals)
+
+    # If nothing was written to stdout print the last expression
+    if pos == sys.stdout.tell() and result is not None:
+        p(result)  # TODO: Maybe change end argument
 
 
 def main():
     import argparse
     parser = argparse.ArgumentParser(
         prog='pythonp')
+    parser.add_argument('-e', '--each',
+                        action='store_true',
+                        help="evalute code on each 'line'")
     parser.add_argument('code', nargs=1)
     args = parser.parse_args()
-    exec(args.code[0], globals())
+
+    g = globals().copy()
+
+    if args.each:
+        del g['lines'], g['_lines']
+        for l in sys.stdin:
+            g['l'] = l
+            exec_one(args.code[0], g)
+    else:
+        exec_one(args.code[0], g)
 
 
 if __name__ == '__main__':
