@@ -43,7 +43,9 @@ use it to save up memory.
 
 #### `l`
 Each line of the `sys.stdin` when `-e` option is on. See the explanation
-on `-e` option below.
+on `-e` option below. Note that currently globals are shared among
+all lines and there could be side effects. This is a inteded behavior
+ but can change in the future.
 
 
 ## Features
@@ -53,7 +55,7 @@ not evalute to `None`. If you don't want this feature you can put
 something like `;pass` or `;None` in the end of your code.
 
 * If `-e` option is given, your code can work on each line `l`, not the
-entire lines `lines` or `_lines`. The names `lines` and `_lines`
+entire lines `lines` or `_lines`. The names `lines` and `_lines` will
 disappear and can not be used.
 
 
@@ -96,7 +98,7 @@ that python can do
 ```bash
 $ ls | pythonp 'from random import sample; p(sample(_lines, 2), end=".")'
 $ ls | pythonp 'p(sum(len(l) for l in lines))'
-$ cat urls.txt | pythonp 'from requests import get; [get(url.strip()) for url in lines]; pass'
+$ cat urls.txt | pythonp -e 'from requests import get; get(l.strip()); pass'
 ```
 
 
