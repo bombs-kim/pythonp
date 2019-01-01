@@ -34,7 +34,6 @@ character. You can think of it as `sys.stdin` except that it's
 subscriptable and allows a one-time random access, which means you
 can do something `lines[3], lines[10:]`.
 
-
 #### `_lines`
 Lazy evaluted non-stream-like version of `lines`.
 Becuase it's a `collections.abc.Sequence`, you can access its 
@@ -43,14 +42,14 @@ and so forth. The lines are not prepared until you actually
 use it to save up memory.
 
 #### `l`
-Each line of `lines` When -e option is on. See the explanation
-on `-e --each` option below.
+Each line of the `sys.stdin` when `-e` option is on. See the explanation
+on `-e` option below.
 
 
 ## Features
-* The last expression is automatically printed with `p` function if 
-nothing has been previously printed. If you don't want that you can
-put `;pass` in the end.
+* The last expression is automatically printed with `p` function if your
+code dind't write anything to `sys.stdout`. If you don't want this feature
+you can put `;pass` in the end.
 
 * If `-e` option is given, your code can work on each line `l`, not the
 entire lines `lines` or `_lines`. The names `lines` and `_lines`
@@ -102,6 +101,9 @@ $ cat urls.txt | pythonp 'from requests import get; [get(url.strip()) for url in
 
 ## Misc
 
+* If you want a shorter name for `pythonp` you can do something like this.  
+`mv $(which pythonp) $(dirname $(which pythonp))/py  # rename pythonp to py`.
+
 * Both python2 and python3 are supported.
 
 * Refer to python official docs to learn useful string manipulating functions
@@ -113,4 +115,3 @@ https://docs.python.org/3/howto/functional.html
 
 * If you want some other features, you are always welcome to make an issue,
 at the issue tab on the top menu.
-
