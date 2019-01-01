@@ -48,8 +48,9 @@ on `-e` option below.
 
 ## Features
 * The last expression is automatically printed with `p` function if your
-code dind't write anything to `sys.stdout`. If you don't want this feature
-you can put `;pass` in the end.
+code dind't write anything to `sys.stdout` and the last expression does
+not evalute to `None`. If you don't want this feature you can put
+something like `;pass` or `;None` in the end of your code.
 
 * If `-e` option is given, your code can work on each line `l`, not the
 entire lines `lines` or `_lines`. The names `lines` and `_lines`
