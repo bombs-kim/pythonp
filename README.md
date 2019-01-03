@@ -23,10 +23,13 @@ cp pythonp/__main__.py ...../pythonp
 
 #### `p`
 A handy print function with commandline usage in mind. It has the
-same interface as the default `print` function except that it specially
-handles a single iterable as an argument, in which case it prints as many
+similar interface to the built-in `print` with a few exceptions.
+- It specially handles a single iterable as an argument,
+in which case it prints as many
 times as the number of elements in the iterable. Giving extra positional
 arguments along with an iterable is not allowed.
+- A newline character `'\n'` is removed automatically, if it exists at the end.
+If you hate this implicitness, you can always return to `print`.
 
 #### `lines`
 Standard input lines where each line ends with a newline
@@ -80,42 +83,59 @@ $ pythonp 'time.time()'
 
 Get files whose names are longer than 5  
 ```bash
-$ ls | pythonp "p((l for l in lines if len(l)>5), end='')"
+$ ls | pythonp -e "if len(l)>5: p(l)"
 LICENSE
 README.md
 pythonp
 setup.py
 ```
 
+Randomly sample N files to investigate from a large number of files
+``` bash
+ls | pythonp "random.sample(_lines, 3)"
+item_1443
+item_6360
+item_7285
+```
+
 Concatenate filenames  
 ```bash
-$ ls | pythonp "p((l.strip() for l in lines if not 'bombs' in l), end=',')"
+$ ls | pythonp "','.join(l.strip() for l in lines if not 'bombs' in l)"
 LICENSE,README.md,pythonp,setup.py,
 ```
 
 Get the 4th column of the processs status  
 ```bash
-$ ps | pythonp '(l.split()[3] for l in lines[1:])'
+$ ps | tail -n+1 | pythonp -e "l.split()[3]"
 /usr/local/bin/fish
 -fish
 python3
 ssh
+
+# or
+$ ps | pythonp "lines[1:]" | pythonp -e "l.split()[3]"  # using only pythonp
 ```
 
 You can also do some crazy stuffs becuase pythonp can do anything
 that python can do  
 ```bash
-$ pythonp "now=datetime.datetime.now();p(now.year+now.day)"
-$ ls | pythonp 'from random import sample; p(sample(_lines, 2), end=".")'
-$ ls | pythonp 'p(sum(len(l) for l in lines))'
-$ cat urls.txt | pythonp -e 'from requests import get; get(l.strip()); pass'
+# If you have to solve a weird quiz
+$ pythonp "now=datetime.datetime.now();(now.year+now.day)%10"
+
+# Make at most 5 random names
+$ pythonp "'\n'*5" | pythonp -e "''.join(random.sample(string.ascii_letters, 7))" | xargs touch
+
+# If you want a one-liner crawler
+$ cat urls.txt | pythonp -e 'requests.get(l.strip())' > output
 ```
 
 
 ## Misc
 
 * If you want a shorter name for `pythonp` you can do something like this.  
-`mv $(which pythonp) $(dirname $(which pythonp))/py  # rename pythonp to py`.
+```bash
+mv $(which pythonp) $(dirname $(which pythonp))/p  # rename pythonp to p
+```
 
 * Both python2 and python3 are supported.
 

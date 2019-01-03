@@ -23,17 +23,24 @@ except:
 # TODO
 
 
+def stripped_str(v):
+    v = str(v)
+    if len(v) and v[-1] == '\n':
+        return v[:-1]
+    return v
+
+
 def p(value, *args, **kwargs):
     # TODO: Add dostring
     if isinstance(value, str):
-        print(value, *args, **kwargs)
+        print(stripped_str(value), *args, **kwargs)
         return
 
     try:
         values = iter(value)
     except TypeError:
         # If value is not iterable, just print it
-        print(value, *args, **kwargs)
+        print(stripped_str(value), *args, **kwargs)
         return
 
     if args:
@@ -43,7 +50,7 @@ def p(value, *args, **kwargs):
     #       Which one would be better, '' or '\n'?
     # kwargs['end'] = kwargs.get('end', '')
     for v in values:
-        print(v, *args, **kwargs)
+        print(stripped_str(v), *args, **kwargs)
 
 
 # [Abstract base classes(ABC's) used]
