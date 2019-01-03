@@ -4,3 +4,4 @@ build
 test.sh
 memo
 .*/
+**/__pycache__/*
