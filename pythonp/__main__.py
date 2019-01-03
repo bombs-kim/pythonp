@@ -1,6 +1,6 @@
 #! /usr/bin/env python
-
 # -*- coding: utf-8 -*-
+
 from __future__ import print_function
 
 import ast
@@ -110,27 +110,39 @@ def exec_and_eval_last(code, globals):
     exec(code, globals)
 
 
-def _make_write_hook(old_writer, flag: list):
+def _make_new_writer(old_writer, flag: list):
     self = old_writer.__self__
 
+    # TODO: change this to bound method if needed
+    # For example, like
+    # https://stackoverflow.com/questions/1015307/python-bind-an-unbound-method
     def new_writer(value):
+        """Detects write events and set flag"""
         self.write = old_writer
         flag[0] = True
         old_writer(value)
+
     return new_writer
 
 
 def exec_one(code, globals):
+    # TODO: How bout copying a globals() before passing it
     write_called = [False]
-    sys.stdout.write = _make_write_hook(
-        sys.stdout.write, write_called)
-    sys.stdout.buffer.write = _make_write_hook(
-        sys.stdout.buffer.write, write_called)
+    stdout = sys.stdout
+    write_backup, buffer_write_backup = stdout.write, stdout.buffer.write
+
+    stdout.write = _make_new_writer(
+        stdout.write, write_called)
+    stdout.buffer.write = _make_new_writer(
+        stdout.buffer.write, write_called)
     result = exec_and_eval_last(code, globals)
+
+    stdout.write, stdout.buffer.write = write_backup, buffer_write_backup
 
     # If nothing was written to stdout print the last expression
     if not write_called[0] and result is not None:
-        p(result)  # TODO: Maybe change end argument
+        p(result)
+
 
 
 class keydefaultdict(defaultdict):
