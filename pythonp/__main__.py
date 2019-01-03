@@ -154,15 +154,27 @@ class keydefaultdict(defaultdict):
             return ret
 
 
-def find_name(key):
-    try:
-        return getattr(__builtins__, key)
-    except AttributeError:
-        pass
-    try:
-        return importlib.__import__(key)
-    except KeyError:
-        raise KeyError(key)
+def make_find_name(builtins):
+    """In some edge cases, accessing builtins in eval or exec
+       is not easy at all. To cover all the cases, we make a
+       clsoure including `builtins` and make them always accessible
+    """
+
+    def find_name(key):
+        """In eval or exec, the global scope is a default dict and
+           this function defines fallback behaviors in case of
+           __missing__
+        """
+        try:
+            return getattr(builtins, key)
+        except AttributeError:
+            pass
+        try:
+            return importlib.__import__(key)
+        except KeyError:
+            raise KeyError(key)
+
+    return find_name
 
 
 def main():
@@ -175,8 +187,15 @@ def main():
     parser.add_argument('code', nargs=1)
     args = parser.parse_args()
 
+    try:
+        # In case of python 3
+        import builtins as __builtins__
+    except ImportError:
+        pass
+
     # Automatic importing support
-    g = keydefaultdict(find_name)
+    fname = make_find_name(__builtins__)
+    g = keydefaultdict(fname)
     g.update(globals())
 
     if args.each:
