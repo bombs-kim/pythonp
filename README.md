@@ -101,7 +101,7 @@ item_7285
 Concatenate filenames  
 ```bash
 $ ls | pythonp "','.join(l.strip() for l in lines if not 'bombs' in l)"
-LICENSE,README.md,pythonp,setup.py,
+LICENSE,README.md,pythonp,setup.py
 ```
 
 Get the 4th column of the processs status  
@@ -112,8 +112,8 @@ $ ps | tail -n+1 | pythonp -e "l.split()[3]"
 python3
 ssh
 
-# or
-$ ps | pythonp "lines[1:]" | pythonp -e "l.split()[3]"  # using only pythonp
+# or, using only pythonp
+$ ps | pythonp "lines[1:]" | pythonp -e "l.split()[3]"
 ```
 
 You can also do some crazy stuffs becuase pythonp can do anything
@@ -125,7 +125,7 @@ $ pythonp "now=datetime.datetime.now();(now.year+now.day)%10"
 # Make at most 5 random names
 $ pythonp "'\n'*5" | pythonp -e "''.join(random.sample(string.ascii_letters, 7))" | xargs touch
 
-# If you want a one-liner crawler
+# If you want an one-liner crawler
 $ cat urls.txt | pythonp -e 'requests.get(l.strip())' > output
 ```
 
@@ -146,5 +146,5 @@ https://docs.python.org/3/library/string.html
 with pythonp
 https://docs.python.org/3/howto/functional.html
 
-* If you want some other features, you are always welcome to make an issue,
+* If you want some other features, you are always welcome to make an issue
 at the issue tab on the top menu.
