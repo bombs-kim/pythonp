@@ -5,3 +5,4 @@ test.sh
 memo
 .*/
 **/__pycache__/*
+**/*.pyc
