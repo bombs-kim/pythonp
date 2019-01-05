@@ -209,6 +209,11 @@ def make_find_name(builtins):
         """In eval or exec, the global scope is a default dict and
            this function defines fallback behaviors for __missing__ events.
         """
+        if key == 'l':
+            line = sys.stdin.readline()
+            if len(line) and line[-1] == '\n':
+                line = line[:-1]
+            return line
         try:
             return getattr(builtins, key)
         except AttributeError:

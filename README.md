@@ -2,7 +2,7 @@
 
 `pythonp` is a simple utility script that helps you using python on the
 command line. Basically, it's a `python -c` command with a handy print
-function `p`. See examples below to see how convenient it can be.
+function `p`. See examples below to see how convenient it can be.  
 By design, no magic is added in `pythonp` in a hope that
 it will be merged into some major python implementations later
 and becomes default setting for `python -c`. Therefore, any kind of
@@ -39,19 +39,21 @@ each line of it doesn't end with a newline character. Also note that it's
 subscriptable and allows a one-time random access, which means you
 can do something `lines[3], lines[10:]`.
 
+#### `l`
+`l` is a line. It doesn't end with a new line character like each line
+of `lines`.  
+Without `-e` option, `pythonp` read a line from `sys.stdlin`
+and assign the line to `l` each time you access it. It's usually used
+to retrieve only the first few lines.  
+With `-e` option, it represent each line
+of the standard input. See the feature explanation about `-e` option below.
+
 #### `_lines`
 Lazy evaluted non-stream-like version of `lines`.
 Becuase it's a `collections.abc.Sequence`, you can access its 
 lines multiple times, reverse it, do inclusion test on it,
 and so forth. The lines are not prepared until you actually
 use it to save up memory.
-
-#### `l`
-Each line of the `sys.stdin` when `-e` option is on. See explanations
-with `-e` option below. Note that in the current `pythonp` implementation
-globals are shared among
-all lines and there could be side effects. This is a inteded behavior
- but can change in the future.
 
 
 ## Features
@@ -62,7 +64,10 @@ something like `;pass` or `;None` in the end of your code.
 
 * If `-e` option is given, your code can work on each line `l`, not the
 entire lines `lines` or `_lines`. The names `lines` and `_lines` will
-disappear and can not be used.
+disappear and can not be used. Note that in the current implementation
+globals are shared among all lines and there could be side effects.
+This is a intended behavior but can change in the future.
+
 
 * Automatic importing is supported. `pythonp` automatically tries to
 import a name for you when it encounters an unseen one.
@@ -91,6 +96,12 @@ Print time
 ```bash
 $ pythonp 'time.time()'
 1546362172.5707405
+```
+
+Get the last item from a list
+```bash
+$ echo "1:2:3:4:5" | pythonp "l.split(':')[-1]"
+
 ```
 
 List files whose names are longer than 5
