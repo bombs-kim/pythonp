@@ -23,17 +23,15 @@ cp pythonp/__main__.py ...../pythonp
 
 #### `p`
 A handy print function with commandline usage in mind. It has the
-similar interface to the built-in `print` with a few exceptions.
+similar interface to the built-in `print` with some exceptions.
 - It specially handles a single iterable as an argument,
 in which case it prints as many
 times as the number of elements in the iterable. Giving extra positional
 arguments along with an iterable is not allowed.
-- A newline character `'\n'` is removed automatically, if it exists at the end.
-If you hate this implicitness, you can always return to `print`.
 
 #### `lines`
-Standard input lines where each line ends with a newline
-character. You can think of it as `sys.stdin` except that it's
+Standard input lines. You can think of it as `sys.stdin` except that
+each line of it doesn't end with a newline character. Also note that it's
 subscriptable and allows a one-time random access, which means you
 can do something `lines[3], lines[10:]`.
 
@@ -46,7 +44,8 @@ use it to save up memory.
 
 #### `l`
 Each line of the `sys.stdin` when `-e` option is on. See the explanation
-on `-e` option below. Note that currently globals are shared among
+on `-e` option below. Note that in the current `pythonp` implementation
+globals are shared among
 all lines and there could be side effects. This is a inteded behavior
  but can change in the future.
 

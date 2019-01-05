@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pythonp",
-    version="0.3.1,
+    version="0.3.2",
     author="Beomsoo Kim",
     author_email="bluewhale8202@gmail.com",
     description="python -c with a handy print function p",

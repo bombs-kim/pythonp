@@ -23,24 +23,17 @@ except:
 # TODO
 
 
-def stripped_str(v):
-    v = str(v)
-    if len(v) and v[-1] == '\n':
-        return v[:-1]
-    return v
-
-
 def p(value, *args, **kwargs):
     # TODO: Add dostring
     if isinstance(value, str):
-        print(stripped_str(value), *args, file=sys.stdout, **kwargs)
+        print(value, *args, file=sys.stdout, **kwargs)
         return
 
     try:
         values = iter(value)
     except TypeError:
         # If value is not iterable, just print it
-        print(stripped_str(value), *args, file=sys.stdout, **kwargs)
+        print(value, *args, file=sys.stdout, **kwargs)
         return
 
     if args:
@@ -50,7 +43,7 @@ def p(value, *args, **kwargs):
     #       Which one would be better, '' or '\n'?
     # kwargs['end'] = kwargs.get('end', '')
     for v in values:
-        print(stripped_str(v), *args, file=sys.stdout, **kwargs)
+        print(v, *args, file=sys.stdout, **kwargs)
 
 
 # [Abstract base classes(ABC's) used]
@@ -66,6 +59,8 @@ def p(value, *args, **kwargs):
 class SubscriptableStdin(Iterable):
     def __iter__(self):
         for line in sys.stdin:
+            if len(line) and line[-1] == '\n':
+                line = line[:-1]
             yield line
 
     def __getitem__(self, key):
@@ -237,8 +232,9 @@ def main():
     g.update(globals())
 
     if args.each:
+        lines = g['lines']
         del g['lines'], g['_lines']
-        for l in sys.stdin:
+        for l in lines:
             g['l'] = l
             exec_one(args.code[0], g)
     else:
