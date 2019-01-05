@@ -71,6 +71,7 @@ class SubscriptableStdin(Iterable):
         raise KeyError('Error')
 
 
+# TODO: maybe remove this type and instruct users to use `list(lines)`
 class LazySequence(Sequence):
     """A LazySequence lazily constructs a Sequence from an iterable."""
 
@@ -115,9 +116,9 @@ def exec_and_eval_last(code, globals):
 def is_python2():
     return sys.version_info[0] == 2
 
+
 # MonitoredStdout and _make_new_writer is used to detect write event
 # of sys.stdout in python2 and python3 respectively.
-
 
 class MonitoredStdout(object):
     def __init__(self, sys, write_called):
@@ -146,7 +147,8 @@ def _make_new_writer(old_writer, flag):
 
 
 def exec_one(code, globals):
-    # TODO: How bout copying a globals() before passing it
+    # TODO: Maybe pass a copied globals() each time
+    # to minimize side effects
     write_called = [False]
     stdout = sys.stdout
 
@@ -171,6 +173,21 @@ def exec_one(code, globals):
         p(result)
 
 
+def preprocess(code):
+    vinfo = sys.version_info
+    if vinfo[0] != 3 or vinfo[1] < 6:
+        return code.replace("`", '"""')
+
+    _chunks = code.split('`')
+    chunks = []
+    for idx, c in enumerate(_chunks[:-1]):
+        chunks.append(c)
+        if idx % 2 == 0:
+            chunks.append('f')
+        chunks.append('"""')
+    chunks.append(_chunks[-1])
+    return ''.join(chunks)
+
 
 class keydefaultdict(defaultdict):
     def __missing__(self, key):
@@ -185,12 +202,12 @@ def make_find_name(builtins):
     """In some edge cases, accessing builtins in eval or exec
        is not easy at all. To cover all the cases, we make a
        clsoure including `builtins` and make them always accessible
+       by find_name function.
     """
 
     def find_name(key):
         """In eval or exec, the global scope is a default dict and
-           this function defines fallback behaviors in case of
-           __missing__
+           this function defines fallback behaviors for __missing__ events.
         """
         try:
             return getattr(builtins, key)
@@ -225,20 +242,24 @@ def main():
         # the following line is needed
         global __builtins__
 
-    # A hack. To support automatic importing, we use a defaultdict
+    # A hack to support automatic importing.
+    # We use a defaultdict object
     # as the global for eval and exec later.
     fname = make_find_name(__builtins__)
     g = keydefaultdict(fname)
     g.update(globals())
+    # import ipdb
+    # ipdb.set_trace(context=15)
+    code = preprocess(args.code[0])
 
     if args.each:
         lines = g['lines']
         del g['lines'], g['_lines']
         for l in lines:
             g['l'] = l
-            exec_one(args.code[0], g)
+            exec_one(code, g)
     else:
-        exec_one(args.code[0], g)
+        exec_one(code, g)
 
 
 if __name__ == '__main__':

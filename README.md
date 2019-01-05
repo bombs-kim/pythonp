@@ -4,7 +4,7 @@
 command line. Basically, it's a `python -c` command with a handy print
 function `p`. See examples below to see how convenient it can be.
 By design, no magic is added in `pythonp` in a hope that
-it will be merged in to some major python implementations later
+it will be merged into some major python implementations later
 and becomes default setting for `python -c`. Therefore, any kind of
 valid python code should be able to run with `pythonp` and only
 python code can be run.
@@ -47,8 +47,8 @@ and so forth. The lines are not prepared until you actually
 use it to save up memory.
 
 #### `l`
-Each line of the `sys.stdin` when `-e` option is on. See the explanation
-on `-e` option below. Note that in the current `pythonp` implementation
+Each line of the `sys.stdin` when `-e` option is on. See explanations
+with `-e` option below. Note that in the current `pythonp` implementation
 globals are shared among
 all lines and there could be side effects. This is a inteded behavior
  but can change in the future.
@@ -67,6 +67,15 @@ disappear and can not be used.
 * Automatic importing is supported. `pythonp` automatically tries to
 import a name for you when it encounters an unseen one.
 
+* Backtick(\`) in code is replaced with `"""` so that you can have
+one more way to make string literals. In python 3.6 or above `f` prefix
+is also added to make the enclosed section a f-string.
+For example, you can do
+something like
+```bash
+$ echo 91/seoul/bombs | pythonp -e "`name='{l.split('/')[2]}'`"  # python3.6+
+name='bombs'
+```
 
 ## Examples
 
@@ -84,7 +93,7 @@ $ pythonp 'time.time()'
 1546362172.5707405
 ```
 
-Get files whose names are longer than 5  
+List files whose names are longer than 5
 ```bash
 $ ls | pythonp -e "if len(l)>5: p(l)"
 LICENSE
