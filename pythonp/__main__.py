@@ -33,14 +33,14 @@ def stripped_str(v):
 def p(value, *args, **kwargs):
     # TODO: Add dostring
     if isinstance(value, str):
-        print(stripped_str(value), *args, **kwargs)
+        print(stripped_str(value), *args, file=sys.stdout, **kwargs)
         return
 
     try:
         values = iter(value)
     except TypeError:
         # If value is not iterable, just print it
-        print(stripped_str(value), *args, **kwargs)
+        print(stripped_str(value), *args, file=sys.stdout, **kwargs)
         return
 
     if args:
@@ -50,7 +50,7 @@ def p(value, *args, **kwargs):
     #       Which one would be better, '' or '\n'?
     # kwargs['end'] = kwargs.get('end', '')
     for v in values:
-        print(stripped_str(v), *args, **kwargs)
+        print(stripped_str(v), *args, file=sys.stdout, **kwargs)
 
 
 # [Abstract base classes(ABC's) used]
@@ -117,7 +117,25 @@ def exec_and_eval_last(code, globals):
     exec(code, globals)
 
 
-def _make_new_writer(old_writer, flag: list):
+def is_python2():
+    return sys.version_info[0] == 2
+
+# MonitoredStdout and _make_new_writer is used to detect write event
+# of sys.stdout in python2 and python3 respectively.
+
+
+class MonitoredStdout(object):
+    def __init__(self, sys, write_called):
+        self.sys = sys
+        self.write_called = write_called
+
+    def write(self, value):
+        self.sys.stdout = self.sys.__stdout__
+        self.write_called[0] = True
+        self.sys.__stdout__.write(value)
+
+
+def _make_new_writer(old_writer, flag):
     self = old_writer.__self__
 
     # TODO: change this to bound method if needed
@@ -136,15 +154,22 @@ def exec_one(code, globals):
     # TODO: How bout copying a globals() before passing it
     write_called = [False]
     stdout = sys.stdout
-    write_backup, buffer_write_backup = stdout.write, stdout.buffer.write
 
-    stdout.write = _make_new_writer(
-        stdout.write, write_called)
-    stdout.buffer.write = _make_new_writer(
-        stdout.buffer.write, write_called)
+    if is_python2():
+        sys.stdout = MonitoredStdout(sys, write_called)
+    else:
+        write_backup, buffer_write_backup = stdout.write, stdout.buffer.write
+        stdout.write = _make_new_writer(
+            stdout.write, write_called)
+        stdout.buffer.write = _make_new_writer(
+            stdout.buffer.write, write_called)
+
     result = exec_and_eval_last(code, globals)
 
-    stdout.write, stdout.buffer.write = write_backup, buffer_write_backup
+    if is_python2():
+        sys.stdout = sys.__stdout__
+    else:
+        stdout.write, stdout.buffer.write = write_backup, buffer_write_backup
 
     # If nothing was written to stdout print the last expression
     if not write_called[0] and result is not None:
@@ -177,8 +202,10 @@ def make_find_name(builtins):
         except AttributeError:
             pass
         try:
+            if is_python2():
+                return __import__(key)
             return importlib.__import__(key)
-        except KeyError:
+        except ImportError:
             raise KeyError(key)
 
     return find_name
@@ -198,9 +225,13 @@ def main():
         # In case of python 3
         import builtins as __builtins__
     except ImportError:
-        pass
+        # to avoid UnboundLocalError(local variable
+        # __builtins__ referenced before assignment) in python 2,
+        # the following line is needed
+        global __builtins__
 
-    # Automatic importing support
+    # A hack. To support automatic importing, we use a defaultdict
+    # as the global for eval and exec later.
     fname = make_find_name(__builtins__)
     g = keydefaultdict(fname)
     g.update(globals())
