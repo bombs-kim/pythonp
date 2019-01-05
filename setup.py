@@ -10,7 +10,7 @@ setuptools.setup(
     version="0.3.4",
     author="Beomsoo Kim",
     author_email="bluewhale8202@gmail.com",
-    description="python -c with a handy print function p",
+    description="A powerful utility that empowers pythonistas in the command line",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/bombs-kim/pythonp",
