@@ -3,7 +3,11 @@
 `pythonp` is a simple utility script that helps you using python on the
 command line. Basically, it's a `python -c` command with a handy print
 function `p`. See examples below to see how convenient it can be.
-
+By design, no magic is added in `pythonp` in a hope that
+it will be merged in to some major python implementations later
+and becomes default setting for `python -c`. Therefore, any kind of
+valid python code should be able to run with `pythonp` and only
+python code can be run.
 
 ## How to install
 
