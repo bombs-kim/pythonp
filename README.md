@@ -1,12 +1,12 @@
 # What is pythonp?
 
-`pythonp` is a simple utility script that helps you using python on the
-command line. Basically, it's a `python -c` command with a handy print
-function `p`. See examples below to see how convenient it can be.  
-By design, no magic is added in `pythonp` in a hope that
+**pythonp** is a simple utility script that helps you using python on the
+command line. Basically, it's a **python -c** command with a handy print
+function **p**. See examples below to see how convenient it can be.  
+By design, no magic is added in **pythonp** in a hope that
 it will be merged into some major python implementations later
-and becomes default setting for `python -c`. Therefore, any kind of
-valid python code should be able to run with `pythonp` and only
+and becomes default setting for **python -c**. Therefore, any kind of
+valid python code should be able to run with **pythonp** and only
 python code should be.
 
 
@@ -16,12 +16,13 @@ I(bombs) recently found out that there are already several projects that share
 smilar goals with this project such as python-c, pythonpy and so forth.
 Especially [pythonPy](https://github.com/Russell91/pythonpy) is super
 popular. I think that is an amazing project and I don't mean to assert that
-every aspect of `pythonp` is breakingly new.  
+every aspect of **pythonp** is breakingly new.  
 But there are some fundamental differences regardless of much resemblence
-in features. `pythonp` has been designed
+in features. **pythonp** has been designed
 to be able to run fully functional python programs, not just
-single statements. Also, it avoids adding `pythonp` only features or
- options and tries best to be compatible with `python -c` because the
+single statements. Also, it avoids adding external features or options
+but it just adds some useful initialization to the original python.
+It tries best to be compatible with **python -c** because the
  ultimate goal of this project is to be merged into some major
  python implementations, not to remain as a standalone package.
 
