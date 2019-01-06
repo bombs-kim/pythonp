@@ -9,6 +9,23 @@ and becomes default setting for `python -c`. Therefore, any kind of
 valid python code should be able to run with `pythonp` and only
 python code should be.
 
+
+# Disclaimer
+
+I(bombs) recently found out that there are already several projects that share
+smilar goals with this project such as python-c, pythonpy and so forth.
+Especially [pythonPy](https://github.com/Russell91/pythonpy) is super
+popular. I think that is an amazing project and I don't mean to assert that
+every aspect of `pythonp` is breakingly new.  
+But there are some fundamental differences regardless of much resemblence
+in features. `pythonp` has been designed
+to be able to run fully functional python programs, not just
+single statements. Also, it avoids adding `pythonp` only features or
+ options and tries best to be compatible with `python -c` because the
+ ultimate goal of this project is to be merged into some major
+ python implementations, not to remain as a standalone package.
+
+
 ## How to install
 
 You can install it via pip
@@ -40,12 +57,12 @@ subscriptable and allows a one-time random access, which means you
 can do something `lines[3], lines[10:]`.
 
 #### `l`
-`l` is a line. It doesn't end with a new line character like each line
-of `lines`.  
+`l` is a line from the standard input. It doesn't end with a new
+line character just like each line of `lines`.  
 Without `-e` option, `pythonp` read a line from `sys.stdlin`
-and assign the line to `l` each time you access it. It's usually used
+and assign the content to `l` each time you access `l`. It's usually used
 to retrieve only the first few lines.  
-With `-e` option, it represent each line
+With `-e` option, it represents each line
 of the standard input. See the feature explanation below to learn `-e` option.
 
 #### `_lines`
@@ -143,7 +160,7 @@ $ pythonp "now=datetime.datetime.now();(now.year+now.day)%10"
 $ pythonp "'\n'*5" | pythonp -e "''.join(random.sample(string.ascii_letters, 7))" | xargs touch
 
 # An one-liner web crawler
-$ cat urls.txt | pythonp 'for l in lines: p(requests.get(l)); time.sleep(1)' > output
+$ cat urls.txt | pythonp -e 'p(requests.get(l)); time.sleep(1)' > output
 ```
 
 
@@ -151,7 +168,7 @@ $ cat urls.txt | pythonp 'for l in lines: p(requests.get(l)); time.sleep(1)' > o
 
 * If you want a shorter name for `pythonp` you can do something like this.  
 ```bash
-mv $(which pythonp) $(dirname $(which pythonp))/p  # rename pythonp to p
+mv $(which pythonp) $(dirname $(which pythonp))/py  # rename pythonp to p
 ```
 
 * Both python2 and python3 are supported.
