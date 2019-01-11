@@ -169,7 +169,7 @@ $ cat urls.txt | pythonp -e 'p(requests.get(l)); time.sleep(1)' > output
 
 * If you want a shorter name for `pythonp` you can do something like this.  
 ```bash
-mv $(which pythonp) $(dirname $(which pythonp))/py  # rename pythonp to p
+mv $(which pythonp) $(dirname $(which pythonp))/py  # rename pythonp to py
 ```
 
 * Both python2 and python3 are supported.

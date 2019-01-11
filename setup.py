@@ -1,4 +1,5 @@
 import setuptools
+from pythonp import __version__
 
 
 with open("README.md", "r") as fh:
@@ -7,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pythonp",
-    version="0.3.5",
+    version=__version__,
     author="Beomsoo Kim",
     author_email="bluewhale8202@gmail.com",
     description="A powerful utility that empowers pythonistas in the command line",
