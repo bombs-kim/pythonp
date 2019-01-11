@@ -3,28 +3,29 @@
 **pythonp** is a simple utility script that helps you using python on the
 command line. Basically, it's a **python -c** command with a handy print
 function **p**. See examples below to see how convenient it can be.  
-By design, no magic is added in **pythonp** in a hope that
-it will be merged into some major python implementations later
-and becomes default setting for **python -c**. Therefore, any kind of
-valid python code should be able to run with **pythonp** and only
-python code should be.
+By design, it avoids adding much sugar to the goold old
+**python -c**. It introduces no magic except
+for a few preprocessings and handy global variables.
+The goal of this project is to deliver seamless experience to
+python users and become a part of some major python
+implementations in the end, without remaining as a standalone package.
 
 
 # Disclaimer
 
-I(bombs) recently found out that there are already several projects that share
-smilar goals with this project such as python-c, pythonpy and so forth.
-Especially [pythonPy](https://github.com/Russell91/pythonpy) is super
-popular. I think that is an amazing project and I don't mean to assert that
+There are already several projects that have
+smilar goals with this project such as
+[pyp](https://code.google.com/archive/p/pyp/),
+[pythonpy](https://github.com/Russell91/pythonpy) and others.
+Particularly [pythonpy](https://github.com/Russell91/pythonpy) is super
+popular. I think they are all amazing projects and I don't mean to assert that
 every aspect of **pythonp** is breakingly new.  
-But there are some fundamental differences regardless of much resemblence
-in features. **pythonp** has been designed
-to be able to run fully functional python programs, not just
-single statements. Also, it avoids adding external features or options
-but it just adds some useful initialization to the original python.
-It tries best to be compatible with **python -c** because the
- ultimate goal of this project is to be merged into some major
- python implementations, not to remain as a standalone package.
+But there are fundamental differences between **pythonp**
+and others. Notably, **pythonp** has been designed
+to be able to run *any python programs*, not just
+single statements. Any
+valid python code should be able to be run with **pythonp** and only
+(almost valid) python code should.
 
 
 ## How to install
@@ -55,7 +56,7 @@ arguments along with an iterable is not allowed.
 Standard input lines. You can think of it as `sys.stdin` except that
 each line of it doesn't end with a newline character. Also note that it's
 subscriptable and allows a one-time random access, which means you
-can do something `lines[3], lines[10:]`.
+can do something like `lines[3], lines[10:]`.
 
 #### `l`
 `l` is a line from the standard input. It also doesn't end with a new
@@ -92,7 +93,7 @@ import a name for you when it encounters an unseen one.
 
 * Backtick(\`) in code is replaced with `"""` so that you can have
 one more way to make string literals. In python 3.6 or above `f` prefix
-is also added to make the enclosed section a f-string.
+is also added to make the enclosed section a **f-string**.
 For example, you can do
 something like this.
 ```bash
@@ -100,66 +101,56 @@ $ echo 91/seoul/bombs | pythonp "`name='{l.split('/')[2]}'`"  # python3.6+
 name='bombs'
 ```
 
+
 ## Examples
 
-Print numbers / time
+Make commands that you want on the fly and and run them with your shell
 ```bash
-$ pythonp 'range(3)'
-0
-1
-2
-
-$ pythonp 'time.time()'
-1546362172.5707405
-```
-
-Get the last item from a list
-```bash
-$ echo "1:2:3:4:5" | pythonp "l.split(':')[-1]"
-
-```
-
-Pass the results to the shell to mv them
-```bash
+# Remove extensions of .txt files
 $ ls | pythonp -e "if l.endswith('.txt'): p('mv', l, l[:-4])" | sh
 ```
 
-Randomly sample N files from a large number of files
+Randomly sample N lines from a large number of lines
 ``` bash
+# choose n files randomly
 ls | pythonp "random.sample(_lines, 3)"
 item_1443
 item_6360
 item_7285
 ```
 
-Concatenate
+Concatenate lines
 ```bash
 $ ls | pythonp "','.join(l.strip() for l in lines if not 'bombs' in l)"
 LICENSE,README.md,pythonp,setup.py
 ```
 
-Get the 4th column of the processs status  
+Do something for **e**ach line
 ```bash
+# A web crawler one-liner
+$ cat urls.txt | pythonp -e 'p(requests.get(l)); time.sleep(1)' > output
+```
+
+Split a long line and output the nth chunk 
+```bash
+# Get the 4th column from the current processs status 
 $ ps | tail -n+1 | pythonp -e "l.split()[3]"
 /usr/local/bin/fish
 -fish
 python3
 ssh
 
-# or, using only pythonp
+# Only using only pythonp
 $ ps | pythonp "lines[1:]" | pythonp -e "l.split()[3]"
 ```
 
-
+Others
 ```bash
-# Solve some weird quiz
+# Use it to solve some weird quiz
 $ pythonp "now=datetime.datetime.now();(now.year+now.day)%10"
 
 # Make at most 5 random names
-$ pythonp "'\n'*5" | pythonp -e "''.join(random.sample(string.ascii_letters, 7))" | xargs touch
-
-# An one-liner web crawler
-$ cat urls.txt | pythonp -e 'p(requests.get(l)); time.sleep(1)' > output
+$ pythonp "'\n'*(5-1)" | pythonp -e "''.join(random.sample(string.ascii_letters, 7))" | xargs touch
 ```
 
 
