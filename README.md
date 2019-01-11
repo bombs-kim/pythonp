@@ -58,11 +58,9 @@ subscriptable and allows a one-time random access, which means you
 can do something `lines[3], lines[10:]`.
 
 #### `l`
-`l` is a line from the standard input. It doesn't end with a new
-line character just like each line of `lines`.  
-Without `-e` option, `pythonp` read a line from `sys.stdlin`
-and assign the content to `l` each time you access `l`. It's usually used
-to retrieve only the first few lines.  
+`l` is a line from the standard input. It also doesn't end with a new
+line character.
+Without `-e` option, `l` is the first line from the standard input.
 With `-e` option, it represents each line
 of the standard input. See the feature explanation below to learn `-e` option.
 

@@ -194,9 +194,7 @@ class keydefaultdict(defaultdict):
         if self.default_factory is None:
             raise KeyError(key)
         else:
-            ret = self.default_factory(key)
-            if key != 'l':
-                self[key] = ret
+            ret = self[key] = self.default_factory(key)
             return ret
 
 
